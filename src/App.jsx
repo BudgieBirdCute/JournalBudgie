@@ -1,4 +1,9 @@
+import { app } from './firebase';
+
 function App() {
+
+  console.log('Firebase app:', app);
+
   return (
     <main>
       <h1>🐦 Journal Budgie </h1>
