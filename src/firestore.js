@@ -8,8 +8,8 @@ import {
     doc,
     updateDoc,
     arrayUnion,
+    onSnapshot,
 } from "firebase/firestore";
-
 import { db } from "./firebase";
 
 export async function createJournal(userId, name) {
@@ -35,5 +35,21 @@ export async function inviteToJournal(journalId, email) {
 
     await updateDoc(doc(db, "journals", journalId), {
         members: arrayUnion(invitedUser.uid),
+    });
+}
+
+export async function getUserJournals(userId) {
+    const journalsRef = collection(db, "journals");
+    const q = query(journalsRef, where("members", "array-contains", userId));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({ id:doc.id, ...doc.data() }));
+}
+
+export function listenToUserJournals(userId, callback) {
+    const journalsRef = collection(db, "journals");
+    const q = query(journalsRef, where("members", "array-contains", userId));
+
+    return onSnapshot(q, (snapshot) => {
+        const journals = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     });
 }

@@ -18,8 +18,11 @@ function App() {
   }
 
   return (
-    // <Dashboard />
+    <>
+    <Dashboard />
     <CreateJournal />
+    <MyJournals />
+    </>
   );
 }
 
