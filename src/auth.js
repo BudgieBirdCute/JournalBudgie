@@ -30,7 +30,7 @@ export const signUp = async (email, password) => {
  export async function createUserProfile(user) {
    await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
-      email: user.email,
+      email: user.email.toLowerCase().trim(),
       createdAt: new Date(),
    }, { merge:true });
  }

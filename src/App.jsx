@@ -22,7 +22,6 @@ function App() {
     <>
     <Dashboard />
     <CreateJournal />
-    <MyJournals />
     </>
   );
 }

@@ -9,6 +9,7 @@ import {
     updateDoc,
     arrayUnion,
     onSnapshot,
+    getDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -25,7 +26,7 @@ export async function createJournal(userId, name) {
 
 export async function inviteToJournal(journalId, email) {
     const usersRef = collection(db, "users");
-    const q = query(usersRef, where("email", "==", email));
+    const q = query(usersRef, where("email", "==", email.toLowerCase().trim()));
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
@@ -36,6 +37,16 @@ export async function inviteToJournal(journalId, email) {
     await updateDoc(doc(db, "journals", journalId), {
         members: arrayUnion(invitedUser.uid),
     });
+}
+
+export async function getUserEmail(uid) {
+    const userSnap = await getDoc(doc(db, "users", uid));
+
+    if (!userSnap.exists()) {
+        return "Unknown User";
+    }
+
+    return userSnap.data().email;
 }
 
 export async function getUserJournals(userId) {
@@ -49,7 +60,22 @@ export function listenToUserJournals(userId, callback) {
     const journalsRef = collection(db, "journals");
     const q = query(journalsRef, where("members", "array-contains", userId));
 
-    return onSnapshot(q, (snapshot) => {
+    return onSnapshot(q, async (snapshot) => {
         const journals = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        
+        const journalsWithEmails = await Promise.all(
+            journals.map(async (j) => {
+                const emails = await Promise.all(j.members.map(getUserEmail));
+                return { ...j, memberEmails: emails };
+            })
+        );
+        callback(journalsWithEmails);
     });
+}
+
+export async function checkEmailExists(email) {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", email.toLowerCase().trim()));
+    const snapshot = await getDocs(q);
+    return !snapshot.empty;
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUserJournals } from "./firestore";
+import { getUserJournals, listenToUserJournals, getUserEmail } from "./firestore";
 import { useAuth } from "./AuthContext";
 
 export default function MyJournals() {
@@ -10,6 +10,7 @@ export default function MyJournals() {
     if (!user) return;
     const unsubscribe = listenToUserJournals(user.uid, setJournals);
     return unsubscribe;
+
   }, [user]);
 
   if (journals.length === 0) return <p>No journals yet.</p>;
@@ -19,7 +20,8 @@ export default function MyJournals() {
       <h3>My Journals</h3>
       {journals.map((j) => (
         <p key={j.id}>
-          {j.name} — ID: {j.id} — Created: {j.createdAt?.toDate?.().toLocaleString() ?? "..."}
+          {j.name} — ID: {j.id} — Created: {j.createdAt?.toDate?.().toLocaleString() ?? "..."} - Members: {j.memberEmails.join(", ")}
+
         </p>
       ))}
     </div>

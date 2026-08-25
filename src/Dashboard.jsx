@@ -1,5 +1,6 @@
 import { useAuth } from "./AuthContext";
 import { logOut } from "./auth";
+import MyJournals from "./MyJournals";
 
 function Dashboard() {
     const { user } = useAuth();
@@ -20,18 +21,13 @@ function Dashboard() {
                 <p>{user.email}</p>
 
                 <section>
-                    <h3> My Journal </h3>
-
-                    <button>
-                        + New Entry
-                    </button>
+                    <MyJournals />
                 </section>
 
-                <section>
+                {/* <section>
                     <h3>Recent Entries</h3>
-
                     <p>No journal entries yet.</p>
-                </section>
+                </section> */}
             </main>
         </div>
     )

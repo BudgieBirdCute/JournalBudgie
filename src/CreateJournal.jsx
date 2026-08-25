@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "./AuthContext";
-import { createJournal, inviteToJournal } from "./firestore";
+import { createJournal, inviteToJournal, checkEmailExists } from "./firestore";
 
 
 export default function CreateJournal() {
@@ -24,26 +24,36 @@ export default function CreateJournal() {
     setError("");
 
     try {
-      const journalId = await createJournal(user.uid, name);
+        const validEmails = emails.filter((email) => email.trim() !== "");
 
-      const validEmails = emails.filter((email) => email.trim() !== "");
+        const checks = await Promise.all(validEmails.map(async (email) => ({
+            email,
+            exists: await checkEmailExists(email),
+        }))
+    );
 
-      for (const email of validEmails) {
-        try {
-          await inviteToJournal(journalId, email);
-        } catch (err) {
-          console.warn(`Couldn't invite ${email}:`, err.message);
-        }
-      }
+    const notFound = checks.filter((c) => !c.exists).map((c) => c.email);
 
-      setName("");
-      setEmails(["", "", ""]);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (notFound.length > 0) {
+        setError(`No account found for: ${notFound.join(", ")}`);
+        setLoading(false);
+        return; // stop here — don't create the journal
     }
-  };
+              // All emails are valid, safe to proceed
+        const journalId = await createJournal(user.uid, name);
+
+        for (const email of validEmails) {
+            await inviteToJournal(journalId, email);
+        }
+
+        setName("");
+        setEmails(["", "", ""]);
+    } catch (err) {
+        setError(err.message);
+    } finally {
+        setLoading(false);
+    }
+};
 
   return (
     <form onSubmit={handleSubmit}>
