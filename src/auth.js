@@ -2,18 +2,23 @@ import {
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword,
     signOut,
+    onAuthStateChanged,
  } from "firebase/auth";
 
  import { auth } from "./firebase";
 
- export function signUp(email, password) {
+ export const signUp = (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password);
- }
+ };
 
- export function login(email, password) { 
+ export const logIn = (email, password) => { 
     return signInWithEmailAndPassword(auth, email, password);
- }
+ };
 
- export function login() {
+ export const logOut = () => {
     return signOut(auth);
- }
+ };
+
+ export const listenToAuth = (callback) => {
+    return onAuthStateChanged(auth, callback);
+ };
