@@ -2,6 +2,8 @@ import { app } from './firebase';
 import { Login } from "./Login";
 import { logOut } from "./auth"
 import { useAuth } from "./AuthContext";
+import Dashboard from "./Dashboard";
+import CreateJournal from "./CreateJournal";
 
 function App() {
 
@@ -16,14 +18,8 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>Welcome to JournalBudgie 🐦</h1>
-
-      <p>Logged in as: {user.email}</p>
-      <button onClick={logOut}>
-        LOG OUT
-      </button>
-    </div>
+    // <Dashboard />
+    <CreateJournal />
   );
 }
 
