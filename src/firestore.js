@@ -4,7 +4,7 @@ import {
     serverTimestamp,
     query,
     where,
-    getDoc,
+    getDocs,
     doc,
     updateDoc,
     arrayUnion,
