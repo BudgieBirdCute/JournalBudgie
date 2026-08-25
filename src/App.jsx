@@ -4,6 +4,7 @@ import { logOut } from "./auth"
 import { useAuth } from "./AuthContext";
 import Dashboard from "./Dashboard";
 import CreateJournal from "./CreateJournal";
+import MyJournals from "./MyJournals";
 
 function App() {
 
