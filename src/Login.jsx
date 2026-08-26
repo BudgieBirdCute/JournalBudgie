@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { logIn, signUp } from "./auth";
+import { logIn, signUp, signInWithGoogle } from "./auth";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -20,6 +20,15 @@ export function Login() {
         } catch (error) {
             setError(error.message);
         }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError("");
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   return (
@@ -46,6 +55,10 @@ export function Login() {
           {isCreatingAccount ? "Sign Up" : "Log In"}
         </button>
         </form>
+
+        <button onClick={handleGoogleSignIn}>
+          Sign In With Google
+        </button>
 
         {error && <p>{error}</p>}
       <button

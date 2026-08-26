@@ -3,10 +3,11 @@ import {
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
+    signInWithPopup,
+    GoogleAuthProvider,
  } from "firebase/auth";
  import { doc, setDoc } from "firebase/firestore";
  import { db } from "./firebase";
-
  import { auth } from "./firebase";
 
 export const signUp = async (email, password) => {
@@ -34,3 +35,10 @@ export const signUp = async (email, password) => {
       createdAt: new Date(),
    }, { merge:true });
  }
+
+ export const signInWithGoogle = async () => {
+   const provider = new GoogleAuthProvider();
+   const userCredential = await signInWithPopup(auth, provider);
+   await createUserProfile(userCredential.user);
+   return userCredential;
+ };
